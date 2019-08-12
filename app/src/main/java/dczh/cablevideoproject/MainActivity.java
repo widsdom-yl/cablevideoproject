@@ -1,5 +1,6 @@
 package dczh.cablevideoproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import dczh.Adapter.BaseAdapter;
@@ -119,15 +121,17 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
         head.fillSignature();
         body.setDeviceCode(dev.getDevCode());
 
-        java.text.DateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        java.text.DateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateEnd = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateEnd);//date 换成已经已知的Date对象
-        cal.add(Calendar.HOUR_OF_DAY, -48);// before 48 hour
-        //body.setEndTime(format.format(dateEnd));
+        String end =  format.format(dateEnd);
+        Log.e("tag",end);
+        body.setEndTime(format.format(dateEnd));
+        cal.add(Calendar.DATE, -1);// before 48 hour
         body.setStartTime(format.format(cal.getTime()));
-        cal.add(Calendar.HOUR_OF_DAY, 62);// before 48 hour
-        body.setEndTime(format.format(cal.getTime()));
+       // cal.add(Calendar.HOUR, 6);//
+       // body.setEndTime(format.format(cal.getTime()));
         requestBean.setRequestBody(body);
         requestBean.setRequestHead(head);
 
@@ -167,14 +171,15 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
                         //
                         loadingDialog.dismiss();
                             String res =responseStr;
-                            res = res.replaceAll("\\u003d","");
+                            res = res.replaceAll("\\u003d","=");
                             res = res.replaceAll("\\u0026","&");
                             final ResponseBean responseBean  = GsonUtil.parseJsonWithGson(res,ResponseBean.class);
                             ImageUrlsBean responseBody = responseBean.getResponseBody();
 
                             //ImageUrlsBean imageUrlsBean = GsonUtil.parseJsonWithGson(responseBody.toString(),ImageUrlsBean.class);
                             Log.e("tag","imageUrlsBean image count is "+responseBody.getDownloadUrls().size());
-                            adapter.resetMList(responseBody.getReverseDownloadUrls());
+                            downloadUrls = responseBody.getReverseDownloadUrls();
+                            adapter.resetMList(downloadUrls);
                             adapter.notifyDataSetChanged();
 
                     }
@@ -184,9 +189,16 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
             }
         });
     }
-
+    List<String> downloadUrls;
     @Override
     public void onItemClick(View view, int position) {
+        Intent intent = new Intent(this,MediaDetailActivity.class);
+        Bundle bundle = new Bundle();
+        if (downloadUrls.size()>0){
+            bundle.putString("param1",downloadUrls.get(position));
+        }
+        intent.putExtras(bundle);
+        startActivity(intent);
 
     }
 
