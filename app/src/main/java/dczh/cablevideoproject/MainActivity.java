@@ -176,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
                             final ResponseBean responseBean  = GsonUtil.parseJsonWithGson(res,ResponseBean.class);
                             ImageUrlsBean responseBody = responseBean.getResponseBody();
 
+                            if (responseBody.getDownloadUrls() == null){
+                                return;
+                            }
                             //ImageUrlsBean imageUrlsBean = GsonUtil.parseJsonWithGson(responseBody.toString(),ImageUrlsBean.class);
                             Log.e("tag","imageUrlsBean image count is "+responseBody.getDownloadUrls().size());
                             downloadUrls = responseBody.getReverseDownloadUrls();
