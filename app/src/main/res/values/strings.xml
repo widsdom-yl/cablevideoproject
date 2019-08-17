@@ -2,5 +2,6 @@
     <string name="app_name">电缆通道监控</string>
     <string name="string_cable_video">电缆通道监控</string>
     <string name="string_refresh">刷新</string>
+    <string name="string_alarm">报警</string>
 
 </resources>

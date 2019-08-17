@@ -1,11 +1,19 @@
 package dczh;
 
 import android.app.Application;
+import android.app.Notification;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
+import com.umeng.message.UmengMessageHandler;
+import com.umeng.message.UmengNotificationClickHandler;
+import com.umeng.message.entity.UMessage;
+
+import java.util.Map;
 
 
 public class MyApplication extends Application
@@ -43,6 +51,34 @@ public class MyApplication extends Application
             }
         });
 
+        UmengNotificationClickHandler notificationClickHandler = new UmengNotificationClickHandler() {
+
+            @Override
+            public void dealWithCustomAction(Context context, UMessage msg) {
+                Toast.makeText(context, msg.custom, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        UmengMessageHandler messageHandler = new UmengMessageHandler() {
+            @Override
+            public Notification getNotification(Context context, UMessage msg) {
+                for (Map.Entry entry : msg.extra.entrySet()) {
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (key.toString().equals("url")){
+//                        Toast.makeText(context, value.toString(), Toast.LENGTH_LONG).show();
+//                        String url = value.toString();
+//                        Uri uri = Uri.parse(url);
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                        startActivity(intent);
+                    }
+
+                }
+                return super.getNotification(context, msg);
+            }
+        };
+        mPushAgent.setMessageHandler(messageHandler);
+       mPushAgent.setNotificationClickHandler(notificationClickHandler);
 
     }
 

@@ -15,7 +15,7 @@ import dczh.Adapter.BaseAdapter;
 import dczh.Adapter.DevAdapter;
 import dczh.Bean.DevBean;
 
-public class VideoListActivity extends AppCompatActivity implements BaseAdapter.OnItemClickListener {
+public class VideoListActivity extends AppCompatActivity implements BaseAdapter.OnItemClickListener, DevAdapter.AlarmClickListener {
     RecyclerView imageRecyclerView;
     DevAdapter adapter ;
     List<DevBean> list;
@@ -55,6 +55,7 @@ public class VideoListActivity extends AppCompatActivity implements BaseAdapter.
         adapter = new DevAdapter(list);
         imageRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
+        adapter.setmAlarmClickListener(this);
     }
 
     @Override
@@ -70,5 +71,15 @@ public class VideoListActivity extends AppCompatActivity implements BaseAdapter.
     @Override
     public void onLongClick(View view, int position) {
 
+    }
+
+    @Override
+    public void clickListener(int position) {
+        DevBean dev = list.get(position);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("param1",dev);
+        Intent intent = new Intent(this,AlarmActivity.class);
+        intent.putExtras(bundle);
+        this.startActivity(intent);
     }
 }

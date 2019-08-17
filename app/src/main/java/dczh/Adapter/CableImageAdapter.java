@@ -1,5 +1,6 @@
 package dczh.Adapter;
 
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,13 +25,24 @@ public class CableImageAdapter extends BaseAdapter<String>
         super.convert(holder, path, position);
         ImageView imageView = holder.getView(R.id.imageView);
         TextView textView = holder.getView(R.id.tx_date);
-        int index =  path.indexOf(".jpg");
+        int index =  path.indexOf("-2019");
+        if (index == 0){
+            index =  path.indexOf("-2020");
+        }
+        if (index == 0){
+            index =  path.indexOf("-2021");
+        }
+        try {
+            String dateStr = path.substring(index+1,index+15);
+            //2019-07-17 04:15:30
+            Date date =  TimeUtil.parse(dateStr);
+            String dateFormatStr = TimeUtil.formatDate(date);
+            textView.setText(dateFormatStr);
+        }
+        catch (Exception e){
+            Log.e("tag",e.toString());
+        }
 
-        String dateStr = path.substring(index-17,index-3);
-        //2019-07-17 04:15:30
-        Date date =  TimeUtil.parse(dateStr);
-        String dateFormatStr = TimeUtil.formatDate(date);
-        textView.setText(dateFormatStr);
         GlideApp.with(MyApplication.getInstance()).asBitmap()
                 .load(path)
                 .centerCrop()
