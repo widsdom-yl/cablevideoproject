@@ -4,7 +4,6 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
@@ -55,7 +54,7 @@ public class MyApplication extends Application
 
             @Override
             public void dealWithCustomAction(Context context, UMessage msg) {
-                Toast.makeText(context, msg.custom, Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, msg.custom, Toast.LENGTH_LONG).show();
             }
         };
 
