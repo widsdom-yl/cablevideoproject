@@ -3,27 +3,24 @@ package dczh.Bean;
 import java.io.Serializable;
 
 public class DevBean implements Serializable {
-    public String getDevCode() {
-        return devCode;
+
+
+    public String getDev() {
+        return dev;
     }
 
-    public void setDevCode(String devCode) {
-        this.devCode = devCode;
+    public void setDev(String dev) {
+        this.dev = dev;
     }
 
-    public String getDevName() {
-        return devName;
+    public String getNme() {
+        return nme;
     }
 
-    public void setDevName(String devName) {
-        this.devName = devName;
+    public void setNme(String nme) {
+        this.nme = nme;
     }
 
-    public DevBean(String devCode, String devName) {
-        this.devCode = devCode;
-        this.devName = devName;
-    }
-
-    private String devCode;
-    private String devName;
+    private String dev;
+    private String nme;
 }

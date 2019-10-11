@@ -20,7 +20,7 @@ public class DevAdapter extends BaseAdapter<DevBean>  {
         super.convert(holder, dev, position);
 
         TextView tx_dev_name = holder.getView(R.id.tx_dev_name);
-        tx_dev_name.setText(dev.getDevName());
+        tx_dev_name.setText(dev.getNme());
         TextView tx_dev_alarm= holder.getView(R.id.tx_dev_alarm);
 
 

@@ -1,6 +1,6 @@
 package dczh.Bean;
 
-public class AlarmBean {
+public class ImageBean {
     public String getDev() {
         return dev;
     }

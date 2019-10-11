@@ -3,5 +3,13 @@
     <string name="string_cable_video">电缆通道监控</string>
     <string name="string_refresh">刷新</string>
     <string name="string_alarm">报警</string>
+    <string name="action_sign_in">登录</string>
+    <string name="string_user">用户名</string>
+    <string name="string_user_password">密码</string>
+    <string name="action_check_remeber_pwd">记住我</string>
+    <string name="error_field_required">请输入有效信息</string>
+    <string name="string_devlist">设备列表</string>
+    <string name="error_login_failed">登录失败，请检查用户名和密码</string>
+    <string name="login_success">登录成功</string>
 
 </resources>

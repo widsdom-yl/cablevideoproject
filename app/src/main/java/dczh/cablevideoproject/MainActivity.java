@@ -11,39 +11,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import dczh.Adapter.AlarmImageAdapter;
 import dczh.Adapter.BaseAdapter;
-import dczh.Adapter.CableImageAdapter;
-import dczh.Bean.BodyBean;
 import dczh.Bean.DevBean;
-import dczh.Bean.HeadBean;
-import dczh.Bean.ImageUrlsBean;
-import dczh.Bean.RequestBean;
-import dczh.Bean.ResponseBean;
+import dczh.Bean.ImageBean;
+import dczh.Util.Config;
 import dczh.Util.GsonUtil;
-import dczh.Util.UTCUtil;
 import dczh.View.LoadingDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-
+/*通道设备图片列表*/
 public class MainActivity extends AppCompatActivity implements BaseAdapter.OnItemClickListener {
     RecyclerView imageRecyclerView;
-    CableImageAdapter adapter;
+    AlarmImageAdapter adapter;
     DevBean dev;
+    List<ImageBean> imageList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,28 +42,20 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
         Bundle bundle = this.getIntent().getExtras();
         if(bundle != null){
             dev = (DevBean) bundle.getSerializable("param");
-            getSupportActionBar().setTitle(dev.getDevName());
+            getSupportActionBar().setTitle(dev.getNme());
         }
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_main);
-        // String ret = sha256("POST/vdt-web/serv?systemCode =IOTDCZHCW&timestamp=1543497503&nonec=12346","DCZH");
+
 
         imageRecyclerView = findViewById(R.id.imageListView);
 
         imageRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         imageRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CableImageAdapter(new ArrayList<String>());
-        adapter.setOnItemClickListener(this);
-        imageRecyclerView.setAdapter(adapter);
+
         requestImage();
-//        new Handler().postDelayed(new Runnable()
-//        {
-//            public void run()
-//            {
-//                requestImage();
-//            }
-//        }, 6 * 1000);
+
 
 
 
@@ -99,106 +80,83 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
         }
         return super.onOptionsItemSelected(item);
     }
-    public void requestImage(){
-        if(loadingDialog == null){
-            loadingDialog = new LoadingDialog(this);
+
+    public void requestImage() {
+
+        if (lod == null)
+        {
+            lod = new LoadingDialog(this);
         }
-        loadingDialog.dialogShow();
-        OkHttpClient okHttpClient  = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10,TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+        lod.dialogShow();
+
+
+        OkHttpClient client = new OkHttpClient();
+
+
+
+
+        MediaType mediaType = MediaType.parse("application/data");
+        final Request request = new Request.Builder()
+                .url(Config.serverUrl+"pic_list.php?dev="+dev.getDev())
+                .get()
                 .build();
 
-        RequestBean requestBean = new RequestBean();
-        BodyBean body = new BodyBean();
-        HeadBean head = new HeadBean();
-        head.setMethod("GENERAL_GET_FILES_DOWNLOAD_BY_DEV");
-        head.setSystemCode("zz");
-        head.setNonce(head.generateRamdomNumber());
-        head.setTimestamp(UTCUtil.getUTC());
-       // head.setTimestamp(System.currentTimeMillis()-16*3600);
-        head.fillSignature();
-        body.setDeviceCode(dev.getDevCode());
+        Call call = client.newCall(request);
 
-        java.text.DateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date dateEnd = new Date();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateEnd);//date 换成已经已知的Date对象
-        String end =  format.format(dateEnd);
-        Log.e("tag",end);
-        body.setEndTime(format.format(dateEnd));
-        cal.add(Calendar.DATE, -1);// before 48 hour
-        body.setStartTime(format.format(cal.getTime()));
-       // cal.add(Calendar.HOUR, 6);//
-       // body.setEndTime(format.format(cal.getTime()));
-        requestBean.setRequestBody(body);
-        requestBean.setRequestHead(head);
-
-        //使用Gson将对象转换为json字符串
-        Gson gson = new Gson();
-
-        String json = gson.toJson(requestBean);
-        Log.e("tag",json);
-        //MediaType  设置Content-Type 标头中包含的媒体类型值
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
-                , json);
-
-        Request request = new Request.Builder()
-                .url("http://58.240.19.74:12003/vdt-web/api/file/getDownloadUrlListByDevice")//请求的url
-                .post(requestBody)
-                .build();
-
-        //创建/Call
-        Call call = okHttpClient.newCall(request);
-        //加入队列 异步操作
         call.enqueue(new Callback() {
-            //请求错误回调方法
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("连接失败");
-                loadingDialog.dismiss();
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    }
+                });
             }
+
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                final String responseStr = response.body().string();
-               System.out.println(responseStr);
+            public void onResponse(Call call, Response response) throws IOException {
+                final String res = response.body().string();
+                Log.e(tag,"res is "+res);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //
-                        loadingDialog.dismiss();
-                            String res =responseStr;
-                            res = res.replaceAll("\\u003d","=");
-                            res = res.replaceAll("\\u0026","&");
-                            final ResponseBean responseBean  = GsonUtil.parseJsonWithGson(res,ResponseBean.class);
-                            ImageUrlsBean responseBody = responseBean.getResponseBody();
-
-                            if (responseBody.getDownloadUrls() == null){
-                                return;
+                        lod.dismiss();
+                        {
+                            // String body = new Gson().toJson(res);
+                            List<ImageBean> lists = GsonUtil.parseJsonArrayWithGson(res, ImageBean[].class);
+                            Log.e(tag,"list count is :"+lists.size());
+                            imageList = lists;
+                            if(lists.size()>0){
+                                if(adapter == null){
+                                    adapter = new AlarmImageAdapter(imageList);
+                                    imageRecyclerView.setAdapter(adapter);
+                                    adapter.setOnItemClickListener(MainActivity.this);
+                                }
+                                else{
+                                    adapter.resetMList(imageList);
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
-                            //ImageUrlsBean imageUrlsBean = GsonUtil.parseJsonWithGson(responseBody.toString(),ImageUrlsBean.class);
-                            Log.e("tag","imageUrlsBean image count is "+responseBody.getDownloadUrls().size());
-                            downloadUrls = responseBody.getReverseDownloadUrls();
-                            adapter.resetMList(downloadUrls);
-                            adapter.notifyDataSetChanged();
+                        }
 
                     }
                 });
-
-
             }
         });
+
+
+
+
     }
-    List<String> downloadUrls;
+
     @Override
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(this,MediaDetailActivity.class);
         Bundle bundle = new Bundle();
-        if (downloadUrls.size()>0){
-            bundle.putString("param1",downloadUrls.get(position));
+        if (imageList.size()>0){
+            bundle.putString("param1",imageList.get(position).getUrl());
         }
         intent.putExtras(bundle);
         startActivity(intent);
@@ -209,5 +167,6 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
     public void onLongClick(View view, int position) {
 
     }
-    LoadingDialog loadingDialog;
+    final static String tag = "MainActivity";
+    LoadingDialog lod;
 }
