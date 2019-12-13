@@ -11,5 +11,8 @@
     <string name="string_devlist">设备列表</string>
     <string name="error_login_failed">登录失败，请检查用户名和密码</string>
     <string name="login_success">登录成功</string>
+    <string name="upload_failed">网络错误</string>
+    <string name="upload_success">音频文件上传成功</string>
+
 
 </resources>

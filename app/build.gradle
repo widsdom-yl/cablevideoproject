@@ -35,5 +35,6 @@ dependencies {
     implementation 'com.umeng.umsdk:utdid:1.1.5.3'
 //PushSDK
     implementation 'com.umeng.umsdk:push:6.0.1'
+    compile 'com.github.adrielcafe:AndroidAudioRecorder:0.3.0'
 
 }

@@ -56,5 +56,19 @@ public class AccountManager {
         return pwd;
     }
 
+    public String getDeviceToken(){
+        SharedPreferences pref = context.getSharedPreferences("devicetoken",MODE_PRIVATE);
+        String usr = pref.getString("devicetoken","");//第二个参数为默认值
+        return usr;
+    }
+    public void saveDeviceToken(String deviceToken){
+        SharedPreferences pref = context.getSharedPreferences("devicetoken",MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("devicetoken",deviceToken);
+        editor.commit();
+    }
+
+
+
 
 }

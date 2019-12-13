@@ -159,6 +159,7 @@ public class LoginActivity extends BaseAppCompatActivity {
         FormBody formBody = new FormBody.Builder()
                 .add("user", mUserName)
                 .add("pass", mPassword)
+                .add("token", AccountManager.getInstance().getDeviceToken())
                 .build();
 
         final Request request = new Request.Builder()

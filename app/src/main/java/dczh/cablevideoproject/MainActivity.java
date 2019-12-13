@@ -151,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.OnIte
 
     }
 
+
+
+
     @Override
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(this,MediaDetailActivity.class);
