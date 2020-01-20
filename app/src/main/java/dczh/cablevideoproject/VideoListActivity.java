@@ -13,6 +13,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import dczh.Bean.UploadFileRetModel;
 import dczh.Bean.UserBean;
 import dczh.Util.Config;
 import dczh.Util.FileUtil;
+import dczh.Util.GlideCacheUtil;
 import dczh.Util.GsonUtil;
 import dczh.View.LoadingDialog;
 import okhttp3.Call;
@@ -137,6 +140,8 @@ public class VideoListActivity extends AppCompatActivity implements BaseAdapter.
            // getSupportActionBar().setTitle(dev.getDevName());
         }
 
+        //String cashSize = GlideCacheUtil.getInstance().getCacheSize(this.getApplicationContext());
+
         setContentView(R.layout.activity_video_list);
         mRecyclerView = findViewById(R.id.list_dev);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -144,6 +149,28 @@ public class VideoListActivity extends AppCompatActivity implements BaseAdapter.
         requestDevlist();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_clear_disk, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            case R.id.action_cleardisk:
+                GlideCacheUtil.getInstance().clearImageDiskCache(VideoListActivity.this.getApplicationContext());
+                String cashSize = GlideCacheUtil.getInstance().getCacheSize(this.getApplicationContext());
+                Toast.makeText(VideoListActivity.this,getString(R.string.clear_disk_finished),Toast.LENGTH_LONG).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public void requestDevlist() {
 
         if (lod == null)
@@ -223,14 +250,14 @@ public class VideoListActivity extends AppCompatActivity implements BaseAdapter.
 
     @Override
     public void onItemClick(View view, int position) {
-       /* DevBean dev = devList.get(position);
+       DevBean dev = devList.get(position);
         Bundle bundle = new Bundle();
         bundle.putSerializable("param",dev);
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtras(bundle);
         this.startActivity(intent);
-        */
-        recordWavTest();
+
+        //recordWavTest();
 
 
     }

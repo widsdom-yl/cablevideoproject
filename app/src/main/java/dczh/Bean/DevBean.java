@@ -23,4 +23,14 @@ public class DevBean implements Serializable {
 
     private String dev;
     private String nme;
+
+    public int getAlm_cnt() {
+        return alm_cnt;
+    }
+
+    public void setAlm_cnt(int alm_cnt) {
+        this.alm_cnt = alm_cnt;
+    }
+
+    private int alm_cnt;
 }
